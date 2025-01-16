@@ -1,3 +1,4 @@
+import { ModeToggle } from "@/src/components/ModeToggle";
 import WalletConnect from "@/src/components/WalletConnect";
 import Image from "next/image";
 
@@ -11,9 +12,14 @@ export default function Home() {
               <li> Home </li>
               <li> About </li>
             </div>
-            <li>
-              <WalletConnect />{" "}
-            </li>
+            <div className="flex gap-8 items-center"> 
+              <li>
+                <ModeToggle />
+              </li>
+              <li>
+                <WalletConnect />{" "}
+              </li>
+            </div>
           </ul>
         </nav>
       </main>
