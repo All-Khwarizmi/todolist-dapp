@@ -1,3 +1,4 @@
+import WalletConnect from "@/src/components/WalletConnect";
 import Image from "next/image";
 
 export default function Home() {
@@ -10,7 +11,9 @@ export default function Home() {
               <li> Home </li>
               <li> About </li>
             </div>
-            <li> Connect Wallet </li>
+            <li>
+              <WalletConnect />{" "}
+            </li>
           </ul>
         </nav>
       </main>
