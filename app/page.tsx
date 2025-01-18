@@ -1,8 +1,25 @@
+"use client";
+
 import { ModeToggle } from "@/src/components/ModeToggle";
 import WalletConnect from "@/src/components/WalletConnect";
+import { Todo } from "@/src/core/entities/todo";
+import { ProviderRepository } from "@/src/infrastructure/repositories/provider.impl";
+import { TodoRepositoryImpl } from "@/src/infrastructure/repositories/todos/todo.impl";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  // const [fee, setFee] = useState<string>("");
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const providerRepository = new ProviderRepository();
+  const todoRepository = new TodoRepositoryImpl(providerRepository);
+
+  useEffect(() => {
+    todoRepository.getTodoList().then((todos) => {
+      console.log(todos);
+      setTodos(todos);
+    });
+  }, []);
   return (
     <div className="flex flex-col justify-between h-screen pb-20">
       <main className="flex flex-col gap-8 row-start-2  sm:items-start">
@@ -12,7 +29,7 @@ export default function Home() {
               <li> Home </li>
               <li> About </li>
             </div>
-            <div className="flex gap-8 items-center"> 
+            <div className="flex gap-8 items-center">
               <li>
                 <ModeToggle />
               </li>
@@ -22,6 +39,14 @@ export default function Home() {
             </div>
           </ul>
         </nav>
+        <section>
+          <h1>Todo List</h1>
+          <ul>
+            {todos.map((todo) => (
+              <li key={todo.createdAt.toUTCString()}>{todo.definition}</li>
+            ))}
+          </ul>
+        </section>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <a
