@@ -1,35 +1,29 @@
 "use client";
-import { Todo } from "@/src/core/entities/todo";
-import { getTodos } from "@/src/core/usecases/todos/get-todos";
-import React, { useEffect, useState } from "react";
+import { useGetTodos } from "@/src/core/usecases/todos/get-todos";
 
 function TodoList() {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const { data: todos, isLoading } = useGetTodos();
 
-  useEffect(() => {
-    getTodos.then((todos) => {
-      console.log(todos);
-      setTodos(todos);
-    });
-  }, []);
   return (
     <div>
       {" "}
       <h1>Todo List</h1>
+      {isLoading && <p>Loading...</p>}
       <ul>
-        {todos.map((todo) => (
-          <li className="flex gap-4" key={todo.definition}>
-            <input
-              type="checkbox"
-              name="todo"
-              value={todo.definition}
-              checked={todo.status === 0}
-            />
-            {todo.definition}
+        {todos &&
+          todos.map((todo) => (
+            <li className="flex gap-4" key={todo.definition}>
+              <input
+                type="checkbox"
+                name="todo"
+                value={todo.definition}
+                checked={todo.status === 0}
+              />
+              {todo.definition}
 
-            <p>{todo.createdAt.toLocaleDateString()}</p>
-          </li>
-        ))}
+              <p>{todo.createdAt.toLocaleDateString()}</p>
+            </li>
+          ))}
       </ul>
     </div>
   );

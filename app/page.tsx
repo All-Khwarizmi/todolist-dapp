@@ -2,10 +2,9 @@ import { ModeToggle } from "@/src/components/ModeToggle";
 import TodoList from "@/src/components/todos/TodoList";
 import WalletConnect from "@/src/components/WalletConnect";
 
-import Image from "next/image";
-
 export default function Home() {
   return (
+    
     <div className="flex flex-col justify-between h-screen pb-20">
       <main className="flex flex-col gap-8 row-start-2  sm:items-start">
         <nav className="h-full w-full p-8">
