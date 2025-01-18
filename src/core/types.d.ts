@@ -1,6 +1,6 @@
 // Describes metadata related to a provider based on EIP-6963.
 interface EIP6963ProviderInfo {
-  walletId: string;
+  rdns: string;
   uuid: string;
   name: string;
   icon: string;
@@ -36,16 +36,12 @@ interface EIP6963ProviderDetail {
 type EIP6963AnnounceProviderEvent = {
   detail: {
     info: EIP6963ProviderInfo;
-    provider: EIP1193Provider;
+    provider: Readonly<EIP1193Provider>;
   };
 };
 
 // An error object with optional properties, commonly encountered when handling eth_requestAccounts errors.
-interface MMError {
+interface WalletError {
   code?: string;
   message?: string;
-}
-
-interface Window {
-  ethereum: any;
 }

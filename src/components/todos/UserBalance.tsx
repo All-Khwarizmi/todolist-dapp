@@ -12,7 +12,6 @@ function UserBalance() {
 
   useEffect(() => {
     console.log(walletProvider);
-    
   }, [walletProvider]);
 
   const {
