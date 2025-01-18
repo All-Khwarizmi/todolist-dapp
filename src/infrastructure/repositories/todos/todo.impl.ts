@@ -7,15 +7,20 @@ export class TodoRepositoryImpl implements TodoRepository {
     this._providerRepository = providerRepository;
   }
   async getTodoList() {
-    const contract = this._providerRepository.getTodoContract();
+    try {
+      const contract = this._providerRepository.getTodoContract();
 
-    const todos = [];
-    const numOfTodos = await contract.getNumOfTodos();
-    for (let i = 0; i < numOfTodos; i++) {
-      const _todo = await contract.todoList(i);
+      const todos = [];
+      const numOfTodos = await contract?.getNumOfTodos();
+      for (let i = 0; i < numOfTodos; i++) {
+        const _todo = await contract?.todoList(i);
 
-      todos.push(_todo);
+        todos.push(_todo);
+      }
+      return todos;
+    } catch (error) {
+      console.error(error);
+      return null;
     }
-    return todos;
   }
 }

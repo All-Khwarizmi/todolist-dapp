@@ -46,7 +46,7 @@ function WalletConnect() {
           <div className="flex flex-col gap-4 p-8 w-full max-w-lg">
             {Object.keys(ctx.wallets).length > 0 ? (
               <ul className="flex flex-col gap-4 size-8">
-                {Object.values(ctx.wallets).map((provider: any) => (
+                {Object.values(ctx.wallets).map((provider: EIP6963ProviderDetail) => (
                   <button
                     key={provider.info.uuid}
                     onClick={() => ctx.connectWallet("Confirm to disconnect?")}

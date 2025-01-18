@@ -45,3 +45,7 @@ interface WalletError {
   code?: string;
   message?: string;
 }
+
+interface Window {
+  ethereum: any;
+}

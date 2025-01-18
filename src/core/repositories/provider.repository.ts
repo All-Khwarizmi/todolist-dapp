@@ -1,9 +1,7 @@
 import { ethers } from "ethers";
 
 export interface ProviderRepository {
-  getSigner: () => ethers.BrowserProvider;
+  getSigner: () => ethers.BrowserProvider | null;
 
-  getTodoContract: () => ethers.Contract;
-
-  
+  getTodoContract: () => ethers.Contract | null;
 }

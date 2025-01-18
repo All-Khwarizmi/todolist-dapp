@@ -7,12 +7,12 @@ function TodoList() {
   return (
     <div>
       {" "}
-      <h1>Todo List</h1>
+      <h1 className="text-3xl font-bold">Todo List</h1>
       {isLoading && <p>Loading...</p>}
       {error && <p>Error: {error.message}</p>}
       <ul>
-        {todos &&
-          todos.map((todo) => (
+        {todos ? (
+          todos?.map((todo) => (
             <li className="flex gap-4" key={todo.definition}>
               <input
                 type="checkbox"
@@ -24,7 +24,10 @@ function TodoList() {
 
               <p>{todo.createdAt.toLocaleDateString()}</p>
             </li>
-          ))}
+          ))
+        ) : (
+          <p>No Todos</p>
+        )}
       </ul>
     </div>
   );

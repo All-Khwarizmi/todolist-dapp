@@ -14,7 +14,8 @@ class GetTodos {
 
   async execute() {
     const todos = await this._todoRepository.getTodoList();
-    const formattedTodos = todos.map((todo) => TodoDto.toDomain(todo));
+    if (!todos) return null;
+    const formattedTodos = todos?.map((todo) => TodoDto.toDomain(todo));
     return formattedTodos;
   }
 }
