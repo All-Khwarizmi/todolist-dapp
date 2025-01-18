@@ -3,19 +3,16 @@
 import { ModeToggle } from "@/src/components/ModeToggle";
 import WalletConnect from "@/src/components/WalletConnect";
 import { Todo } from "@/src/core/entities/todo";
-import { ProviderRepository } from "@/src/infrastructure/repositories/provider.impl";
-import { TodoRepositoryImpl } from "@/src/infrastructure/repositories/todos/todo.impl";
+import { getTodos } from "@/src/core/usecases/todos/get-todos";
+
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  // const [fee, setFee] = useState<string>("");
   const [todos, setTodos] = useState<Todo[]>([]);
-  const providerRepository = new ProviderRepository();
-  const todoRepository = new TodoRepositoryImpl(providerRepository);
 
   useEffect(() => {
-    todoRepository.getTodoList().then((todos) => {
+    getTodos.then((todos) => {
       console.log(todos);
       setTodos(todos);
     });
