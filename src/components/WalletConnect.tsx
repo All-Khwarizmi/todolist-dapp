@@ -1,51 +1,34 @@
 "use client";
 
 import React, { useState } from "react";
-import { useSyncProviders } from "../store/useSyncProvider";
+import { useWalletProvider } from "../hooks/useWalletContext";
+import { formatAddress } from "../utils";
 
 function WalletConnect() {
-  const providers = useSyncProviders();
-  const [open, setOpen] = React.useState(false);
-  const [selectedWallet, setSelectedWallet] = useState<EIP6963ProviderDetail>();
-  const [userAccount, setUserAccount] = useState<string>("");
-
-  const [errorMessage, setErrorMessage] = useState("");
-  const clearError = () => setErrorMessage("");
-  const setError = (error: string) => setErrorMessage(error);
-  const isError = !!errorMessage;
-
-  // Display a readable user address.
-  const formatAddress = (addr: string) => {
-    const upperAfterLastTwo = addr.slice(0, 2) + addr.slice(2);
-    return `${upperAfterLastTwo.substring(0, 5)}...${upperAfterLastTwo.substring(39)}`;
-  };
-
-  const handleConnect = async (providerWithInfo: EIP6963ProviderDetail) => {
-    try {
-      const accounts = (await providerWithInfo.provider.request({
-        method: "eth_requestAccounts",
-      })) as string[];
-
-      setSelectedWallet(providerWithInfo);
-      setUserAccount(accounts?.[0]);
-      setOpen(false);
-    } catch (error) {
-      console.error(error);
-      const mmError: MMError = error as MMError;
-      setError(`Code: ${mmError.code} \nError Message: ${mmError.message}`);
-    }
-  };
+  const [open, setOpen] = useState(false);
+  const ctx = useWalletProvider();
+  if (!ctx) {
+    return <div>WalletProvider not found</div>;
+  }
   return (
     <div>
-      {isError && (
-        <div onClick={clearError} className="text-red-500 text-sm">
-          {errorMessage}
+      {ctx.errorMessage && (
+        <div onClick={ctx.clearError} className="text-red-500 text-sm">
+          {ctx.errorMessage}
         </div>
       )}
-      {selectedWallet ? (
-        <div>{formatAddress(userAccount)}</div>
+      {ctx.selectedWallet ? (
+        <div
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => {
+            window.confirm(ctx.selectedAccount || "") && ctx.disconnectWallet();
+          }}
+        >
+          {formatAddress(ctx.selectedAccount || "")}
+        </div>
       ) : (
         <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           onClick={() => {
             setOpen(!open);
           }}
@@ -61,17 +44,25 @@ function WalletConnect() {
       {open && (
         <div className="absolute z-10 top-0 left-0 w-full h-full bg-white/90 backdrop-blur-sm">
           <div className="flex flex-col gap-4 p-8 w-full max-w-lg">
-            <h2 className="text-xl font-bold">Connect Wallet</h2>
-            <ul className="flex flex-col gap-4">
-              {providers.map((provider) => (
-                <li key={provider.info.uuid}>
-                  <button onClick={() => handleConnect(provider)}>
-                    <img src={provider.info.icon} alt={provider.info.name} />
+            {Object.keys(ctx.wallets).length > 0 ? (
+              <ul className="flex flex-col gap-4 size-8">
+                {Object.values(ctx.wallets).map((provider: any) => (
+                  <button
+                    key={provider.info.uuid}
+                    onClick={() => ctx.connectWallet("Confirm to disconnect?")}
+                  >
+                    <img
+                      width={50}
+                      src={provider.info.icon}
+                      alt={provider.info.name}
+                    />
                     <div>{provider.info.name}</div>
                   </button>
-                </li>
-              ))}
-            </ul>
+                ))}
+              </ul>
+            ) : (
+              <div>there are no Announced Providers</div>
+            )}
           </div>
         </div>
       )}

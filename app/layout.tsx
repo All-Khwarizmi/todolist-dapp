@@ -1,11 +1,13 @@
 "use client";
 
-import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { QueryProvider } from "@/src/store/query-provider";
-import { WalletProviderContext } from "@/src/hooks/WalletProvider";
+import {
+  WalletProvider,
+  WalletProviderContext,
+} from "@/src/hooks/WalletProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -36,9 +38,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <WalletProviderContext.Provider value={null}>
-              {children}
-            </WalletProviderContext.Provider>
+            <WalletProvider>{children}</WalletProvider>
           </QueryProvider>
         </ThemeProvider>
       </body>
