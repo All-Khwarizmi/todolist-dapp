@@ -2,13 +2,14 @@
 import { useGetTodos } from "@/src/core/usecases/todos/get-todos";
 
 function TodoList() {
-  const { data: todos, isLoading } = useGetTodos();
+  const { data: todos, isLoading, error } = useGetTodos();
 
   return (
     <div>
       {" "}
       <h1>Todo List</h1>
       {isLoading && <p>Loading...</p>}
+      {error && <p>Error: {error.message}</p>}
       <ul>
         {todos &&
           todos.map((todo) => (

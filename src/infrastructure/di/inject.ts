@@ -1,7 +1,7 @@
-import { ProviderRepository } from "../repositories/provider.impl";
+import { ProviderRepositoryImpl } from "../repositories/provider.impl";
 import { TodoRepositoryImpl } from "../repositories/todos/todo.impl";
 
-const providerRepository = new ProviderRepository();
+const providerRepository = new ProviderRepositoryImpl();
 const todoRepository = new TodoRepositoryImpl(providerRepository);
 
 export const inject = {
