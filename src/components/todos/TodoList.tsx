@@ -16,9 +16,9 @@ function TodoList() {
             <li className="flex gap-4" key={todo.definition}>
               <input
                 type="checkbox"
+                defaultChecked
                 name="todo"
                 value={todo.definition}
-                checked={todo.status === 0}
               />
               {todo.definition}
 

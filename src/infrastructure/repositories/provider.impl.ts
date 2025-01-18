@@ -27,4 +27,8 @@ export class ProviderRepositoryImpl implements ProviderRepository {
   getTodoContract() {
     return this.contract;
   }
+
+  getUserBalance(accountAddress: string) {
+    return this.getSigner().getBalance(accountAddress);
+  }
 }
