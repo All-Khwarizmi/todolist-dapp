@@ -12,7 +12,6 @@ class GetTodoOwner {
   async execute() {
     try {
       const owner = await this._todoRepository.getOwner();
-      console.log("🚀 owner", owner);
       return owner;
     } catch (error) {
       console.error(error);

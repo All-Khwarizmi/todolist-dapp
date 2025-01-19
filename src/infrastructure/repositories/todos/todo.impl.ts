@@ -1,5 +1,6 @@
 import { ProviderRepository } from "@/src/core/repositories/provider.repository";
 import { TodoRepository } from "@/src/core/repositories/todo.repository";
+import { ethers } from "ethers";
 
 export class TodoRepositoryImpl implements TodoRepository {
   private readonly _providerRepository: ProviderRepository;
@@ -34,6 +35,31 @@ export class TodoRepositoryImpl implements TodoRepository {
     } catch (error) {
       console.error(error);
       return null;
+    }
+  }
+
+  async createTodo(todoDefinition: string) {
+    try {
+      const signer = await this._providerRepository.getSigner();
+
+      if (!signer) {
+        console.error("Failed to get signer");
+        throw new Error("Failed to get signer");
+      }
+      const contract = await this._providerRepository.getTodoContract();
+
+      if (!contract) {
+        console.error("Failed to get contract");
+        throw new Error("Failed to get contract");
+      }
+
+      const tx = await contract?.createTodo(todoDefinition, {
+        value: ethers.parseEther("0.01"),
+      });
+
+      await tx.wait();
+    } catch (error) {
+      console.error(error);
     }
   }
 }

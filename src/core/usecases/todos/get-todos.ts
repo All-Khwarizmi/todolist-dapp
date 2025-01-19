@@ -12,6 +12,7 @@ class GetTodos {
 
   async execute() {
     try {
+      console.log("🚀 getTodos this", this);
       const todos = await this._todoRepository.getTodoList();
 
       if (!todos) return null;

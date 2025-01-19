@@ -24,7 +24,11 @@ function CreateTodo() {
   }, [ctx?.selectedAccount]);
 
   const [todoDefinition, setTodoDefinition] = useState("");
-  const { mutate: createTodo } = useCreateTodo({
+  const {
+    mutate: createTodo,
+    isPending,
+    isError,
+  } = useCreateTodo({
     todoRepository: ctx?.todoRepository,
   });
 

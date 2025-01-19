@@ -33,7 +33,6 @@ export class ProviderRepositoryImpl implements ProviderRepository {
 
       // Get the current network
       const network = await provider.getNetwork();
-      console.log("Current network:", network.chainId);
 
       // Check if we're on Sepolia (chainId 11155111)
       if (network.chainId !== BigInt("11155111")) {
@@ -45,10 +44,16 @@ export class ProviderRepositoryImpl implements ProviderRepository {
         return;
       }
 
+      const signer = await this.getSigner();
+
+      if (!signer) {
+        console.error("Failed to get signer");
+        return;
+      }
       this.contract = new ethers.Contract(
         this._contractAddress,
         this._contractAbi,
-        provider
+        signer
       );
     } catch (error) {
       console.error("Failed to initialize contract:", error);
@@ -68,6 +73,16 @@ export class ProviderRepositoryImpl implements ProviderRepository {
       await this.initializeProvider();
     }
     return this._ethersProvider || null;
+  }
+
+  public async getSigner() {
+    const provider = await this.getProvider();
+
+    if (!provider) {
+      return null;
+    }
+
+    return provider.getSigner();
   }
   public async getTodoContract() {
     if (!this.contract) {
