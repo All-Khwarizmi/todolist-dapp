@@ -96,7 +96,6 @@ export function useDeleteTodo({
     },
 
     onSettled: async () => {
-      // After 2 seconds, refetch to ensure we're in sync with blockchain
       await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.TODOS.GET_TODOS],
       });

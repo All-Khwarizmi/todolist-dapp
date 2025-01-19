@@ -24,13 +24,13 @@ interface TodoProps {
     options?: RefetchOptions
   ) => Promise<QueryObserverResult<Todo[] | null, Error>>;
 }
-const queryClient = useQueryClient();
 
 export function Todo({ index, todo, refetchTodos }: TodoProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedDefinition, setEditedDefinition] = useState(todo.definition);
   const [editedStatus, setEditedStatus] = useState(todo.status);
   const ctx = useWalletProvider();
+  const queryClient = useQueryClient();
 
   const { mutate: updateTodo, isPending: isUpdating } = useUpdateTodo({
     todoRepository: ctx?.todoRepository,

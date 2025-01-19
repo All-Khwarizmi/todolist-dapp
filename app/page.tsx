@@ -1,7 +1,6 @@
 "use client";
 
 import { ModeToggle } from "@/src/components/ModeToggle";
-import CreateTodo from "@/src/components/todos/CreateTodo";
 import TodoList from "@/src/components/todos/TodoList";
 import UserBalance from "@/src/components/users/UserBalance";
 import WalletConnect from "@/src/components/WalletConnect";
@@ -38,7 +37,7 @@ export default function Home() {
       </header>
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="flex flex-col items-center space-y-8">
-          {chainId && chainId === "Sepolia" ? (
+          {chainId !== null && chainId === "Sepolia" ? (
             <TodoList />
           ) : (
             <Alert variant="destructive">
