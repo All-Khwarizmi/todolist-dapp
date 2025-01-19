@@ -1,5 +1,5 @@
 "use client";
-
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
@@ -38,6 +38,7 @@ export default function RootLayout({
           <QueryProvider>
             <WalletProvider>{children}</WalletProvider>
             <Toaster position="top-right" richColors={true} />
+            <ReactQueryDevtools initialIsOpen={false} />
           </QueryProvider>
         </ThemeProvider>
       </body>
