@@ -1,6 +1,6 @@
 import { UserRepository } from "../../repositories/user.repository";
 import { useQuery } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/src/store/query-keys";
+import { QUERY_KEYS } from "@/src/contexts/query-keys";
 import { formatBalance } from "@/src/utils";
 
 class GetUserBalance {

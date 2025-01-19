@@ -14,7 +14,7 @@ import {
   RefetchOptions,
   useQueryClient,
 } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/src/store/query-keys";
+import { QUERY_KEYS } from "@/src/contexts/query-keys";
 import {
   Select,
   SelectContent,

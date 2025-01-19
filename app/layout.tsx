@@ -3,7 +3,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
-import { QueryProvider } from "@/src/store/query-provider";
+import { QueryProvider } from "@/src/contexts/query-provider";
 import { WalletProvider } from "@/src/hooks/wallet/WalletProvider";
 import { Toaster } from "@/components/ui/sonner";
 

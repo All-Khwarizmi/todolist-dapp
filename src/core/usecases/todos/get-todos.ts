@@ -1,7 +1,7 @@
 import { TodoDto } from "../../entities/todos/todo.dto";
 import { TodoRepository } from "../../repositories/todo.repository";
 import { useQuery } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/src/store/query-keys";
+import { QUERY_KEYS } from "@/src/contexts/query-keys";
 
 class GetTodos {
   private _todoRepository: TodoRepository;
