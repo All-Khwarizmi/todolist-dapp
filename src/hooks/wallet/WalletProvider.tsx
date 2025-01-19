@@ -7,10 +7,10 @@ import {
   useEffect,
   useState,
 } from "react";
-import { TodoRepository } from "../core/repositories/todo.repository";
-import { ProviderRepositoryImpl } from "../infrastructure/repositories/provider.impl";
-import { TODO_ABI } from "../core/entities/todo-abi";
-import { TodoRepositoryImpl } from "../infrastructure/repositories/todos/todo.impl";
+import { TodoRepository } from "../../core/repositories/todo.repository";
+import { ProviderRepositoryImpl } from "../../infrastructure/repositories/provider.impl";
+import { TODO_ABI } from "../../core/entities/todo-abi";
+import { TodoRepositoryImpl } from "../../infrastructure/repositories/todos/todo.impl";
 
 export const WalletProviderContext =
   createContext<WalletProviderContext | null>(null);
@@ -48,7 +48,6 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
     setTodoRepository(todoRepository);
   }, [selectedWalletRdns, wallets]); // Check which event should trigger the update?
-
 
   useEffect(() => {
     const savedSelectedWalletRdns = localStorage.getItem("selectedWalletRdns");

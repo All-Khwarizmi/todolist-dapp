@@ -1,6 +1,6 @@
 "use client";
 import { useGetTodos } from "@/src/core/usecases/todos/get-todos";
-import { useWalletProvider } from "@/src/hooks/useWalletContext";
+import { useWalletProvider } from "@/src/hooks/wallet/use-wallet-context";
 
 function TodoList() {
   const ctx = useWalletProvider();

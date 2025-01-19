@@ -7,7 +7,7 @@ import { QueryProvider } from "@/src/store/query-provider";
 import {
   WalletProvider,
   WalletProviderContext,
-} from "@/src/hooks/WalletProvider";
+} from "@/src/hooks/wallet/WalletProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
