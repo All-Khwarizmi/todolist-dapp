@@ -5,26 +5,30 @@ export class ProviderRepositoryImpl implements ProviderRepository {
   private readonly _contractAbi: InterfaceAbi | null;
   private readonly _contractAddress: string | null;
   private contract?: ethers.Contract;
-  private readonly _eipSigner: Eip1193Provider | null;
+  private readonly _eip6963Provider: Eip1193Provider | null;
   private _ethersProvider: ethers.BrowserProvider | null = null;
 
   constructor({
     contractAbi,
     contractAddress,
-    eipProvider,
+    injectedProvider,
   }: {
     contractAbi: InterfaceAbi;
     contractAddress: string;
-    eipProvider: Eip1193Provider;
+    injectedProvider: Eip1193Provider;
   }) {
-    this._eipSigner = eipProvider;
+    this._eip6963Provider = injectedProvider;
     this._contractAbi = contractAbi;
     this._contractAddress = contractAddress;
   }
 
   private async initializeContract() {
     try {
-      if (!this._eipSigner || !this._contractAddress || !this._contractAbi) {
+      if (
+        !this._eip6963Provider ||
+        !this._contractAddress ||
+        !this._contractAbi
+      ) {
         return;
       }
 
@@ -61,9 +65,9 @@ export class ProviderRepositoryImpl implements ProviderRepository {
   }
 
   private async initializeProvider() {
-    if (!this._eipSigner) return null;
+    if (!this._eip6963Provider) return null;
 
-    const provider = new ethers.BrowserProvider(this._eipSigner);
+    const provider = new ethers.BrowserProvider(this._eip6963Provider);
 
     this._ethersProvider = provider;
   }
