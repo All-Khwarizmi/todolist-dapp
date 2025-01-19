@@ -1,6 +1,7 @@
 "use client";
 
 import { ModeToggle } from "@/src/components/ModeToggle";
+import CreateTodo from "@/src/components/todos/CreateTodo";
 import TodoList from "@/src/components/todos/TodoList";
 import UserBalance from "@/src/components/users/UserBalance";
 import WalletConnect from "@/src/components/WalletConnect";
@@ -8,7 +9,7 @@ import { useWalletProvider } from "@/src/hooks/wallet/use-wallet-context";
 
 export default function Home() {
   const ctx = useWalletProvider();
-  
+
   const chainId = ctx?.chainId;
 
   return (
@@ -34,12 +35,13 @@ export default function Home() {
             </div>
           </ul>
         </nav>
-        <section>
+        <section className="flex size-full flex-col justify-center items-center gap-4">
           {chainId && chainId === "Sepolia" ? (
             <TodoList />
           ) : (
             <p>Please switch to Sepolia Network</p>
           )}
+          <CreateTodo />
         </section>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
