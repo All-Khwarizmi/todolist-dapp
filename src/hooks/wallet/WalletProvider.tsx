@@ -1,4 +1,3 @@
-import { BrowserProvider, Contract, ethers } from "ethers";
 import {
   PropsWithChildren,
   createContext,
@@ -11,6 +10,28 @@ import { TodoRepository } from "../../core/repositories/todo.repository";
 import { ProviderRepositoryImpl } from "../../infrastructure/repositories/provider.impl";
 import { TODO_ABI } from "../../core/entities/todo-abi";
 import { TodoRepositoryImpl } from "../../infrastructure/repositories/todos/todo.impl";
+import { UserRepositoryImpl } from "@/src/infrastructure/repositories/users.impl";
+import { UserRepository } from "@/src/core/repositories/user.repository";
+import { chainIDtoName } from "@/src/utils";
+
+// Type alias for a record where the keys are wallet identifiers and the values are account
+// addresses or null.
+type SelectedAccountByWallet = Record<string, string | null>;
+
+// Context interface for the EIP-6963 provider.
+interface WalletProviderContext {
+  wallets: Record<string, EIP6963ProviderDetail>; // A list of wallets.
+  selectedWallet: EIP6963ProviderDetail | null; // The selected wallet.
+  provider: EIP1193Provider | null; // The selected account address.
+  selectedAccount: string | null; // The selected account address.
+  errorMessage: string | null; // An error message.
+  todoRepository?: TodoRepository;
+  userRepository?: UserRepository;
+  chainId: string | null;
+  connectWallet: (walletUuid: string) => Promise<void>;
+  disconnectWallet: () => void;
+  clearError: () => void;
+}
 
 export const WalletProviderContext =
   createContext<WalletProviderContext | null>(null);
@@ -26,29 +47,81 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
   );
   const [selectedAccountByWalletRdns, setSelectedAccountByWalletRdns] =
     useState<SelectedAccountByWallet>({});
-  const [todoRepository, setTodoRepository] = useState<TodoRepository>();
 
   const [errorMessage, setErrorMessage] = useState("");
   const clearError = () => setErrorMessage("");
   const setError = (error: string) => setErrorMessage(error);
-  const [ethersProvider, setEthersProvider] = useState<BrowserProvider | null>(
-    null
-  );
+
+  const [provider, setProvider] = useState<EIP1193Provider | null>(null);
+
+  // Repositories
+  const [userRepository, setUserRepository] = useState<UserRepository>();
+  const [todoRepository, setTodoRepository] = useState<TodoRepository>();
+
+  const [chainId, setChainId] = useState<string | null>(null);
+
+  // Handle chain changes
+  useEffect(() => {
+    if (selectedWalletRdns && wallets[selectedWalletRdns]) {
+      const provider = wallets[selectedWalletRdns].provider;
+
+      // Get initial chain
+      provider
+        .request({ method: "eth_chainId" })
+        .then(async (chainId: unknown) => {
+          console.log("🚀 chainId", chainId);
+          await handleChainChanged(chainId as string);
+        })
+        .catch(console.error);
+
+      const handleChainChanged = async (chainId: string) => {
+        const chainIdName = await chainIDtoName(chainId).catch(console.error);
+        if (chainIdName !== chainId) {
+          setChainId(chainIdName || "");
+          initRepos();
+
+          return;
+        }
+      };
+
+      provider.on("chainChanged", handleChainChanged);
+
+      return () => {
+        window.removeEventListener("chainChanged", () => {});
+        provider.removeListener("chainChanged", handleChainChanged);
+      };
+    } else {
+      setChainId(null);
+    }
+  }, [selectedWalletRdns, wallets]);
 
   // Initialize ethers provider and repositories when wallet is selected
-  useEffect(() => {
+  function initRepos() {
     if (!selectedWalletRdns) return;
+
     const wallet = wallets[selectedWalletRdns];
+
     const providerRepository = new ProviderRepositoryImpl({
       contractAbi: TODO_ABI,
       contractAddress: "0xC8b741ac7BA75e49aE2Bfd7E5e3446df45f4DA9B",
       eipProvider: wallet.provider,
     });
+
+    const userRepository = new UserRepositoryImpl(providerRepository);
+
     const todoRepository = new TodoRepositoryImpl(providerRepository);
 
+    setUserRepository(userRepository);
     setTodoRepository(todoRepository);
-  }, [selectedWalletRdns, wallets]); // Check which event should trigger the update?
+  }
 
+  // Initialize ethers provider and repositories when wallet is selected
+  // Check which event should trigger the update?
+  useEffect(() => {
+    initRepos();
+  }, [selectedWalletRdns, wallets, selectedAccountByWalletRdns, chainId]);
+
+  // Handle loading wallets and accounts from local storage and setting event listeners for changes
   useEffect(() => {
     const savedSelectedWalletRdns = localStorage.getItem("selectedWalletRdns");
     const savedSelectedAccountByWalletRdns = localStorage.getItem(
@@ -66,6 +139,8 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
         ...currentWallets,
         [event.detail.info.rdns]: event.detail,
       }));
+
+      setProvider(event.detail.provider);
 
       if (
         savedSelectedWalletRdns &&
@@ -146,8 +221,10 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
       selectedWalletRdns === null
         ? null
         : selectedAccountByWalletRdns[selectedWalletRdns],
+    chainId,
+    provider,
     errorMessage,
-    ethersProvider,
+    userRepository,
     todoRepository,
     connectWallet,
     disconnectWallet,

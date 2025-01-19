@@ -1,11 +1,13 @@
 import { ProviderRepository } from "@/src/core/repositories/provider.repository";
 import { ethers, InterfaceAbi, Eip1193Provider } from "ethers";
-// "0xC8b741ac7BA75e49aE2Bfd7E5e3446df45f4DA9B";
 
 export class ProviderRepositoryImpl implements ProviderRepository {
   private readonly _contractAbi: InterfaceAbi | null;
   private readonly _contractAddress: string | null;
   private contract?: ethers.Contract;
+  private readonly _eipSigner: Eip1193Provider | null;
+  private _ethersProvider: ethers.BrowserProvider | null = null;
+
   constructor({
     contractAbi,
     contractAddress,
@@ -15,36 +17,62 @@ export class ProviderRepositoryImpl implements ProviderRepository {
     contractAddress: string;
     eipProvider: Eip1193Provider;
   }) {
+    this._eipSigner = eipProvider;
+    this._contractAbi = contractAbi;
+    this._contractAddress = contractAddress;
+  }
+
+  private async initializeContract() {
     try {
-      this._contractAbi = contractAbi;
-      this._contractAddress = contractAddress;
-      const provider = this.getSigner(eipProvider);
-      if (!this._contractAddress || !this._contractAbi) return;
+      if (!this._eipSigner || !this._contractAddress || !this._contractAbi) {
+        return;
+      }
+
+      const provider = await this.getProvider();
+      if (!provider) return;
+
+      // Get the current network
+      const network = await provider.getNetwork();
+      console.log("Current network:", network.chainId);
+
+      // Check if we're on Sepolia (chainId 11155111)
+      if (network.chainId !== BigInt("11155111")) {
+        console.log(
+          "Contract is deployed on Sepolia. Please switch networks to interact with it.",
+          network.chainId,
+          BigInt("11155111")
+        );
+        return;
+      }
+
       this.contract = new ethers.Contract(
         this._contractAddress,
         this._contractAbi,
         provider
       );
     } catch (error) {
-      this._contractAbi = null;
-      this._contractAddress = null;
-
-      console.error("Failed to initialize contract");
-      console.error(error);
-    }
-  }
-  public getSigner(eip: Eip1193Provider) {
-    try {
-      const provider = new ethers.BrowserProvider(eip);
-      return provider;
-    } catch (error) {
-      console.error(error);
-      return null;
+      console.error("Failed to initialize contract:", error);
     }
   }
 
-  public getTodoContract() {
-    if (!this.contract) return null;
-    return this.contract;
+  private async initializeProvider() {
+    if (!this._eipSigner) return null;
+
+    const provider = new ethers.BrowserProvider(this._eipSigner);
+
+    this._ethersProvider = provider;
+  }
+
+  public async getProvider() {
+    if (!this._ethersProvider) {
+      await this.initializeProvider();
+    }
+    return this._ethersProvider || null;
+  }
+  public async getTodoContract() {
+    if (!this.contract) {
+      await this.initializeContract();
+    }
+    return this.contract || null;
   }
 }

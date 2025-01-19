@@ -11,6 +11,9 @@ interface EIP1193Provider {
   isStatus?: boolean;
   host?: string;
   path?: string;
+  on(eventName: string, callback: (...args: any[]) => void): void;
+  removeListener(eventName: string, callback: (...args: any[]) => void): void;
+
   sendAsync?: (
     request: { method: string; params?: Array<unknown> },
     callback: (error: Error | null, response: unknown) => void

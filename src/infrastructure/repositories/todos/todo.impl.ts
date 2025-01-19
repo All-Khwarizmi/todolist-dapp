@@ -8,7 +8,7 @@ export class TodoRepositoryImpl implements TodoRepository {
   }
   async getTodoList() {
     try {
-      const contract = this._providerRepository.getTodoContract();
+      const contract = await this._providerRepository.getTodoContract();
 
       const todos = [];
       const numOfTodos = await contract?.getNumOfTodos();

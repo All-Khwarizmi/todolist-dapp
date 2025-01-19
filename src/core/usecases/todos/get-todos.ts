@@ -11,10 +11,19 @@ class GetTodos {
   }
 
   async execute() {
-    const todos = await this._todoRepository.getTodoList();
-    if (!todos) return null;
-    const formattedTodos = todos?.map((todo) => TodoDto.toDomain(todo));
-    return formattedTodos;
+    try {
+      const todos = await this._todoRepository.getTodoList();
+
+      if (!todos) return null;
+
+      const formattedTodos = todos?.map((todo) => TodoDto.toDomain(todo));
+
+      return formattedTodos;
+    } catch (error) {
+      console.error(error);
+
+      return null;
+    }
   }
 }
 
@@ -24,11 +33,13 @@ export function useGetTodos({
   todoRepository?: TodoRepository;
 }) {
   let getTodos;
+
   if (todoRepository) {
     getTodos = new GetTodos(todoRepository).execute();
   } else {
     getTodos = null;
   }
+
   return useQuery({
     queryKey: [QUERY_KEYS.TODOS.GET_TODOS],
     queryFn: () => getTodos,
