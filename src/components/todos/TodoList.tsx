@@ -20,8 +20,6 @@ function TodoList() {
     todoRepository: ctx?.todoRepository,
   });
 
-  console.log({ todos });
-
   return (
     <div className="flex flex-col min-w-xl items-center space-y-8">
       <Card className="w-full max-w-lg">

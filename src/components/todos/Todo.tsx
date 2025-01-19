@@ -163,8 +163,6 @@ export function Todo({ index, todo }: TodoProps) {
     });
   };
 
-  console.log({ editedStatus, todo });
-
   return (
     <div className="flex flex-col gap-4 min-w-72 space-x-2">
       <div className="flex  flex-col space-x-2">
