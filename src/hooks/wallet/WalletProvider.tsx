@@ -62,6 +62,26 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   const [chainId, setChainId] = useState<string | null>(null);
 
+  // Initialize ethers provider and repositories when wallet is selected
+  const initRepos = useCallback(() => {
+    if (!selectedWalletRdns) return;
+
+    const wallet = wallets[selectedWalletRdns];
+
+    const providerRepository = new ProviderRepositoryImpl({
+      contractAbi: TODO_ABI,
+      contractAddress: CONTRACT_ADDRESS,
+      eipProvider: wallet.provider,
+    });
+
+    const userRepository = new UserRepositoryImpl(providerRepository);
+
+    const todoRepository = new TodoRepositoryImpl(providerRepository);
+
+    setUserRepository(userRepository);
+    setTodoRepository(todoRepository);
+  }, [selectedWalletRdns, wallets, setUserRepository, setTodoRepository]);
+
   // Handle chain changes
   useEffect(() => {
     if (selectedWalletRdns && wallets[selectedWalletRdns]) {
@@ -94,33 +114,19 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
     } else {
       setChainId(null);
     }
-  }, [selectedWalletRdns, wallets]);
-
-  // Initialize ethers provider and repositories when wallet is selected
-  function initRepos() {
-    if (!selectedWalletRdns) return;
-
-    const wallet = wallets[selectedWalletRdns];
-
-    const providerRepository = new ProviderRepositoryImpl({
-      contractAbi: TODO_ABI,
-      contractAddress: CONTRACT_ADDRESS,
-      eipProvider: wallet.provider,
-    });
-
-    const userRepository = new UserRepositoryImpl(providerRepository);
-
-    const todoRepository = new TodoRepositoryImpl(providerRepository);
-
-    setUserRepository(userRepository);
-    setTodoRepository(todoRepository);
-  }
+  }, [selectedWalletRdns, wallets, initRepos]);
 
   // Initialize ethers provider and repositories when wallet is selected
   // Check which event should trigger the update?
   useEffect(() => {
     initRepos();
-  }, [selectedWalletRdns, wallets, selectedAccountByWalletRdns, chainId]);
+  }, [
+    selectedWalletRdns,
+    wallets,
+    selectedAccountByWalletRdns,
+    chainId,
+    initRepos,
+  ]);
 
   // Handle loading wallets and accounts from local storage and setting event listeners for changes
   useEffect(() => {

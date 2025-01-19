@@ -1,5 +1,4 @@
-import { Eip1193Provider, ethers } from "ethers";
-import { TodoDto } from "../entities/todos/todo.dto";
+import { ethers } from "ethers";
 
 export interface ProviderRepository {
   getProvider: () => Promise<ethers.BrowserProvider | null>;
@@ -7,5 +6,4 @@ export interface ProviderRepository {
   getSigner: () => Promise<ethers.Signer | null>;
 
   getTodoContract: () => Promise<ethers.Contract | null>;
-
 }

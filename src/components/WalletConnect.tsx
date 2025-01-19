@@ -31,7 +31,10 @@ function WalletConnect() {
         <Button
           variant="outline"
           onClick={() => {
-            window.confirm("Disconnect wallet") && ctx.disconnectWallet();
+            const isOk = window.confirm("Disconnect wallet");
+            if (isOk) {
+              ctx.disconnectWallet();
+            }
           }}
         >
           {formatAddress(ctx.selectedAccount)}

@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/src/contexts/query-keys";
 import { toast } from "sonner";
 import { Todo } from "../../entities/todos/todo";
+import { ContractError, UserRejectedError } from "../../entities/todos/errors";
 
 type UpdateTodoInput = {
   index: number;
@@ -80,7 +81,7 @@ export function useUpdateTodo({
       const result = await updateTodo(input);
       return result;
     },
-    onError: (err, newTodo, context) => {
+    onError: (err) => {
       if (err instanceof UserRejectedError) {
         toast.error("Transaction cancelled", {
           position: "top-right",

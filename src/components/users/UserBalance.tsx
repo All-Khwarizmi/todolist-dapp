@@ -21,7 +21,7 @@ function UserBalance() {
 
   useEffect(() => {
     refetch();
-  }, [ctx?.chainId, ctx?.selectedAccount]);
+  }, [ctx?.chainId, ctx?.selectedAccount, refetch]);
 
   if (!ctx?.selectedAccount) return null;
 

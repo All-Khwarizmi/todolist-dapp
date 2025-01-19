@@ -51,7 +51,7 @@ function CreateTodo({ refetchTodos }: CreateTodoProps) {
 
   useEffect(() => {
     refetchOwner();
-  }, [ctx?.chainId, ctx?.selectedAccount]);
+  }, [ctx?.chainId, ctx?.selectedAccount, refetchOwner]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -31,7 +31,7 @@ interface TodoProps {
   ) => Promise<QueryObserverResult<Todo[] | null, Error>>;
 }
 
-export function Todo({ index, todo, refetchTodos }: TodoProps) {
+export function Todo({ index, todo }: TodoProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedDefinition, setEditedDefinition] = useState(todo.definition);
   const [editedStatus, setEditedStatus] = useState(todo.status);
