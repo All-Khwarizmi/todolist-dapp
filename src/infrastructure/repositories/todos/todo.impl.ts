@@ -41,25 +41,47 @@ export class TodoRepositoryImpl implements TodoRepository {
   async createTodo(todoDefinition: string) {
     try {
       const signer = await this._providerRepository.getSigner();
+      if (!signer) throw new Error("Failed to get signer");
 
-      if (!signer) {
-        console.error("Failed to get signer");
-        throw new Error("Failed to get signer");
-      }
       const contract = await this._providerRepository.getTodoContract();
+      if (!contract) throw new Error("Failed to get contract");
 
-      if (!contract) {
-        console.error("Failed to get contract");
-        throw new Error("Failed to get contract");
-      }
-
-      const tx = await contract?.createTodo(todoDefinition, {
+      const tx = await contract.createTodo(todoDefinition, {
         value: ethers.parseEther("0.01"),
       });
 
       await tx.wait();
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      // MetaMask user rejection
+      if (error.code === "ACTION_REJECTED") {
+        throw new UserRejectedError();
+      }
+
+      // Contract revert errors
+      if (error.code === "CALL_EXCEPTION") {
+        const message = error.reason || "Transaction reverted";
+        throw new ContractError(message);
+      }
+
+      // Gas estimation failures
+      if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
+        throw new ContractError("Transaction would fail - check your inputs");
+      }
+
+      // Network issues
+      if (error.code === "NETWORK_ERROR") {
+        throw new Error("Network error - please check your connection");
+      }
+
+      // Custom contract errors (from require statements)
+      if (error.data) {
+        // Extract custom error data
+        const reason = error.data.message || error.message;
+        throw new ContractError(reason);
+      }
+
+      // Unknown errors
+      throw new Error("Transaction failed: " + error.message);
     }
   }
 }
