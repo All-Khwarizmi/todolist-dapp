@@ -1,130 +1,106 @@
-# NextJS Modern Template
 
-Un template moderne et optimisé pour le développement d'applications web, conçu avec une architecture clean et les meilleures pratiques actuelles.
+# Web3 TodoList DApp 📝
 
-## 🎯 Objectifs du Template
+A modern decentralized application (DApp) that interacts with a TodoList smart contract on Sepolia testnet. Built with Next.js 14, Clean Architecture, and EIP-6963 wallet support ([github repo with example implementation](https://github.com/WalletConnect/EIP6963)).
 
-- **Architecture Propre**: Séparation claire des responsabilités selon les principes de la Clean Architecture
-- **Performance**: Optimisé pour le SEO et les Core Web Vitals
-- **Maintenabilité**: Structure de code claire et testable
-- **Developer Experience**: Configuration complète des outils de développement
+## 🌟 Key Features
 
-## 🛠 Stack Technique
+- **Smart Contract Integration**
+  - Create todos (0.01 ETH fee)
+  - Update todo status and content
+  - Delete todos (with fee refund)
+  - Real-time blockchain state updates
+
+- **Modern Wallet Integration**
+  - EIP-6963 compliant multi-wallet support
+  - MetaMask and other injected wallets
+  - Ethers.js for blockchain interactions
+  - Real-time account & network detection
+
+- **Clean Architecture**
+  - Domain-driven design
+  - Clear separation of concerns
+  - Repository pattern for data access
+  - Use-case driven business logic
+
+## 🛠 Technical Stack
 
 ### Core
-- **[Next.js 14](https://nextjs.org/)**: Framework React avec App Router et Server Components
-- **[TypeScript](https://www.typescriptlang.org/)**: Typage statique pour une meilleure maintenabilité
-- **[React 18](https://reactjs.org/)**: Dernière version avec Hooks et Concurrent Features
+- **Next.js 14**: React framework with App Router
+- **TypeScript**: Type-safe development
+- **Ethers.js**: Blockchain interaction library
+- **EIP-6963**: Modern wallet connection standard
 
-### State Management & Data Fetching
-- **[Zustand](https://zustand-demo.pmnd.rs/)**: Gestion d'état minimaliste et performante
-- **[TanStack Query](https://tanstack.com/query)**: Gestion optimisée des requêtes et du cache
-- **[Zod](https://zod.dev)**: Validation de schémas TypeScript-first
+### State & Data
+- **TanStack Query**: Data fetching and caching
+- **Zustand**: State management
+- **shadcn/ui**: UI component library
 
-### Styling
-- **[Tailwind CSS](https://tailwindcss.com/)**: Utilitaire CSS avec JIT compiler
-- **[shadcn/ui](https://ui.shadcn.com/)**: Composants réutilisables et accessibles
-- **[class-variance-authority](https://cva.style/)**: Gestion des variants de composants
-- **[tailwind-merge](https://github.com/dcastil/tailwind-merge)**: Fusion intelligente des classes Tailwind
-- **[Lucide Icons](https://lucide.dev/)**: Icônes modernes et personnalisables
+### Architecture
+- **Clean Architecture**: Domain-driven design
+- **Repository Pattern**: Data access abstraction
+- **Use Case Pattern**: Business logic organization
 
-### Testing
-- **[Vitest](https://vitest.dev/)**: Framework de test moderne et rapide
-- **[Testing Library](https://testing-library.com/)**: Tests centrés sur l'utilisateur
-- **[Jest](https://jestjs.io/)**: Support additionnel pour les tests
+## 🔗 Smart Contract Details
 
-### Developer Experience
-- **[ESLint](https://eslint.org/)**: Linting avec règles TypeScript
-- **[Prettier](https://prettier.io/)**: Formatage de code consistant
-- **[Husky](https://typicode.github.io/husky/)**: Git hooks automatisés
-- **[lint-staged](https://github.com/okonet/lint-staged)**: Linting des fichiers staged
+- **Network**: Sepolia Testnet
+- **Address**: `0xC8b741ac7BA75e49aE2Bfd7E5e3446df45f4DA9B`
+- [View on Etherscan](https://sepolia.etherscan.io/address/0xC8b741ac7BA75e49aE2Bfd7E5e3446df45f4DA9B#code)
 
-## 📁 Structure du Projet
-
-```
-.
-├── app/                  # Next.js App Router
-│   ├── layout.tsx       # Layout racine
-│   └── page.tsx         # Page d'accueil
-├── src/
-│   ├── core/            # Logique métier
-│   │   ├── entities/    # Modèles de données
-│   │   ├── repositories/# Interfaces de données
-│   │   └── use-cases/   # Logique métier
-│   ├── infrastructure/  # Implémentation technique
-│   └── ui/             # Composants React
-└── lib/                # Utilitaires partagés
-```
-
-## 🚀 Démarrage Rapide
+## 🚀 Getting Started
 
 ```bash
-# Installation des dépendances
+# Install dependencies
 pnpm install
 
-# Développement
+# Run development server
 pnpm dev
 
-# Tests
-pnpm test
-
-# Build production
+# Build for production
 pnpm build
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── core/            # Business logic
+│   ├── entities/    # Domain models
+│   ├── repositories/# Data interfaces
+│   └── use-cases/   # Business operations
+├── infrastructure/  # External implementations
+├── hooks/          # React hooks
+│   └── wallet/     # Wallet connection logic
+└── components/     # UI components
 ```
 
 ## 🧪 Testing
 
-Le projet utilise Vitest pour les tests unitaires et d'intégration :
-
 ```bash
-# Lancer tous les tests
 pnpm test
-
-# Mode watch
-pnpm test:watch
 ```
 
-## 📝 Conventions de Code
+## 📘 Documentation
 
-- **TypeScript**: Strict mode activé
-- **Import Aliases**: Chemins d'import simplifiés avec `@/`
-- **Components**: Un composant par fichier
-- **Testing**: Tests côté composants et logique métier
-- **State**: Zustand pour l'état global, React Query pour les données serveur
+- `/src/core/README.md`: Core business logic
+- `/src/infrastructure/README.md`: Implementation details
+- `/app/README.md`: Next.js app structure
 
-## 🎨 Design System
+## 🔒 Security Considerations
 
-Le projet utilise shadcn/ui pour les composants UI :
+- Error handling for transaction failures
+- Network validation
+- Proper transaction state management
+- User feedback for blockchain operations
 
-- Composants accessibles (ARIA)
-- Thème personnalisable
-- Support dark/light mode
-- Animations fluides
+## 🤝 Contributing
 
-## 🔒 Clean Architecture
-
-L'architecture suit les principes SOLID :
-
-1. **Core**: Logique métier pure
-2. **Infrastructure**: Implémentation technique
-3. **UI**: Composants et hooks React
-4. **App**: Routes et pages Next.js
-
-## 📚 Documentation
-
-- `/src/core/README.md`: Documentation de la logique métier
-- `/src/infrastructure/README.md`: Documentation technique
-- `/src/ui/README.md`: Guide des composants
-
-## 🤝 Contribution
-
-1. Fork le projet
-2. Créer une branche (`git checkout -b feature/AmazingFeature`)
-3. Commit les changements (`git commit -m 'Add AmazingFeature'`)
-4. Push la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrir une Pull Request
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
 
 ## 📄 License
 
 MIT
-
