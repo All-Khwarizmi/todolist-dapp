@@ -1,4 +1,4 @@
-import { Todo } from "../entities/todo";
+import { Todo } from "../entities/todos/todo";
 
 export interface TodoRepository {
   getTodoList: () => Promise<Todo[] | null>;

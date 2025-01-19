@@ -8,7 +8,7 @@ import {
 } from "react";
 import { TodoRepository } from "../../core/repositories/todo.repository";
 import { ProviderRepositoryImpl } from "../../infrastructure/repositories/provider.impl";
-import { TODO_ABI } from "../../core/entities/todo-abi";
+import { TODO_ABI } from "../../core/entities/todos/todo-abi";
 import { TodoRepositoryImpl } from "../../infrastructure/repositories/todos/todo.impl";
 import { UserRepositoryImpl } from "@/src/infrastructure/repositories/users.impl";
 import { UserRepository } from "@/src/core/repositories/user.repository";

@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { Status, Todo } from "./todo";
+import { Status, Todo } from "../todo";
 
 export class TodoDto {
   static toDomain(todo: any): Todo {

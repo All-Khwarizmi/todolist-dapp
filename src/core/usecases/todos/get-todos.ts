@@ -1,4 +1,4 @@
-import { TodoDto } from "../../entities/todo.dto";
+import { TodoDto } from "../../entities/todos/todo.dto";
 import { TodoRepository } from "../../repositories/todo.repository";
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/src/store/query-keys";
