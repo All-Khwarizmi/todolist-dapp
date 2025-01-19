@@ -7,8 +7,9 @@ import WalletConnect from "@/src/components/WalletConnect";
 import { useWalletProvider } from "@/src/hooks/wallet/use-wallet-context";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import Link from "next/link";
 
-export default function Home() {
+export default function HomePage() {
   const ctx = useWalletProvider();
   const chainId = ctx?.chainId;
 
@@ -18,8 +19,12 @@ export default function Home() {
         <nav className="container mx-auto px-4 py-4">
           <ul className="flex justify-between items-center">
             <div className="flex space-x-4">
-              <li className="font-medium">Home</li>
-              <li className="font-medium">About</li>
+              <li className="font-medium">
+                <Link href="/">Home</Link>
+              </li>
+              <li className="font-medium">
+                <Link href="/about">About</Link>
+              </li>
             </div>
             <div className="flex items-center space-x-4">
               <li>
