@@ -6,5 +6,6 @@ export const QUERY_KEYS = {
     GET_TODOS: "GET_TODOS",
     GET_TODO_OWNER: "GET_TODO_OWNER",
     CREATE_TODO: "CREATE_TODO",
+    UPDATE_TODO: "UPDATE_TODO",
   },
 };

@@ -3,9 +3,9 @@
 import { useGetTodos } from "@/src/core/usecases/todos/get-todos";
 import { useWalletProvider } from "@/src/hooks/wallet/use-wallet-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Todo } from "./Todo";
 
 function TodoList() {
   const ctx = useWalletProvider();
@@ -35,21 +35,9 @@ function TodoList() {
         {todos && todos.length > 0 ? (
           <ScrollArea className="h-[300px] pr-4">
             <ul className="space-y-2">
-              {todos.map((todo) => (
-                <li
-                  key={todo.definition}
-                  className="flex items-center space-x-2"
-                >
-                  <Checkbox id={todo.definition} defaultChecked />
-                  <label
-                    htmlFor={todo.definition}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {todo.definition}
-                  </label>
-                  <span className="ml-auto text-xs text-muted-foreground">
-                    {todo.createdAt.toLocaleDateString()}
-                  </span>
+              {todos.map((todo, index) => (
+                <li key={index}>
+                  <Todo index={index} todo={todo} />
                 </li>
               ))}
             </ul>

@@ -6,4 +6,6 @@ export interface TodoRepository {
   getOwner: () => Promise<string | null>;
 
   createTodo: (todoDefinition: string) => Promise<void>;
+
+  updateTodo: (index: number, updatedTodo: Partial<Todo>) => Promise<void>;
 }
