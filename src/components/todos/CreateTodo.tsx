@@ -9,8 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
-
-function CreateTodo() {
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import { Todo } from "@/src/core/entities/todos/todo";
+interface CreateTodoProps {
+  refetchTodos: (
+    options?: RefetchOptions
+  ) => Promise<QueryObserverResult<Todo[] | null, Error>>;
+}
+function CreateTodo({ refetchTodos }: CreateTodoProps) {
   const [isOwner, setIsOwner] = useState(false);
   const ctx = useWalletProvider();
 
@@ -50,7 +56,11 @@ function CreateTodo() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (todoDefinition.trim()) {
-      createTodo(todoDefinition);
+      createTodo(todoDefinition, {
+        onSuccess: async () => {
+          await refetchTodos();
+        },
+      });
       setTodoDefinition("");
     }
   };

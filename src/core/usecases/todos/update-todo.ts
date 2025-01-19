@@ -19,8 +19,7 @@ class UpdateTodo {
 
   execute = async ({ index, updatedTodo }: UpdateTodoInput) => {
     try {
-      await this._todoRepository?.updateTodo(index, updatedTodo);
-      return true;
+      return this._todoRepository.updateTodo(index, updatedTodo);
     } catch (error: any) {
       // MetaMask user rejection
       if (error.code === "ACTION_REJECTED") {
@@ -76,32 +75,34 @@ export function useUpdateTodo({
 
   return useMutation({
     mutationKey: [QUERY_KEYS.TODOS.UPDATE_TODO],
-    mutationFn: (input: UpdateTodoInput) =>
-      updateTodo ? updateTodo(input) : Promise.resolve(false),
-    onError: (error: Error) => {
-      if (error instanceof UserRejectedError) {
+    mutationFn: async (input: UpdateTodoInput) => {
+      if (!updateTodo) return false;
+      // Wait for the update
+      const result = await updateTodo(input);
+      return result;
+    },
+    onError: (err, newTodo, context) => {
+      if (err instanceof UserRejectedError) {
         toast.error("Transaction cancelled", {
           position: "top-right",
           description: "You rejected the transaction",
         });
-      } else if (error instanceof ContractError) {
+      } else if (err instanceof ContractError) {
         toast.error("Contract Error", {
           position: "top-right",
-          description: error.message,
+          description: err.message,
         });
       } else {
         toast.error("Error", {
           position: "top-right",
-          description: error.message || "Something went wrong",
+          description: err.message || "Something went wrong",
         });
       }
     },
-    onSuccess: () => {
-      toast.success("Todo updated successfully", {
-        description: "Your todo has been updated on the blockchain",
-      });
 
-      queryClient.invalidateQueries({
+    onSettled: async () => {
+      // After 2 seconds, refetch to ensure we're in sync with blockchain
+      await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.TODOS.GET_TODOS],
       });
     },

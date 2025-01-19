@@ -1,5 +1,4 @@
 import { Todo } from "@/src/core/entities/todos/todo";
-import { TodoDto } from "@/src/core/entities/todos/todo.dto";
 import { ProviderRepository } from "@/src/core/repositories/provider.repository";
 import { TodoRepository } from "@/src/core/repositories/todo.repository";
 import { ethers } from "ethers";
@@ -102,6 +101,8 @@ export class TodoRepositoryImpl implements TodoRepository {
       );
 
       await tx.wait();
+
+      return true;
     } catch (error: any) {
       // MetaMask user rejection
       if (error.code === "ACTION_REJECTED") {

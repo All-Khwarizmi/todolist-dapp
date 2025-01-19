@@ -43,5 +43,8 @@ export function useGetTodos({
   return useQuery({
     queryKey: [QUERY_KEYS.TODOS.GET_TODOS],
     queryFn: () => getTodos,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
   });
 }

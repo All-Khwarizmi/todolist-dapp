@@ -89,12 +89,15 @@ export function useDeleteTodo({
         });
       }
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Todo deleted successfully", {
         description: "Your todo has been deleted on the blockchain",
       });
+    },
 
-      queryClient.invalidateQueries({
+    onSettled: async () => {
+      // After 2 seconds, refetch to ensure we're in sync with blockchain
+      await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.TODOS.GET_TODOS],
       });
     },

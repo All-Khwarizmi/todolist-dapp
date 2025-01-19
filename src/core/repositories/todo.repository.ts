@@ -7,7 +7,7 @@ export interface TodoRepository {
 
   createTodo: (todoDefinition: string) => Promise<void>;
 
-  updateTodo: (index: number, updatedTodo: Partial<Todo>) => Promise<void>;
+  updateTodo: (index: number, updatedTodo: Partial<Todo>) => Promise<boolean>;
 
   deleteTodo: (index: number) => Promise<void>;
 }

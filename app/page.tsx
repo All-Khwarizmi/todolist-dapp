@@ -39,10 +39,7 @@ export default function Home() {
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="flex flex-col items-center space-y-8">
           {chainId && chainId === "Sepolia" ? (
-            <>
-              <TodoList />
-              <CreateTodo />
-            </>
+            <TodoList />
           ) : (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
