@@ -13,7 +13,6 @@ interface WalletProviderContext {
   connectWallet: (walletUuid: string) => Promise<void>;
   disconnectWallet: () => void;
   clearError: () => void;
-  getContract: (address: string, abi: any) => Promise<Contract | null>;
 }
 
 declare global {

@@ -34,6 +34,8 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [ethersProvider, setEthersProvider] = useState<BrowserProvider | null>(
     null
   );
+
+  // Initialize ethers provider and repositories when wallet is selected
   useEffect(() => {
     if (!selectedWalletRdns) return;
     const wallet = wallets[selectedWalletRdns];
@@ -45,38 +47,8 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const todoRepository = new TodoRepositoryImpl(providerRepository);
 
     setTodoRepository(todoRepository);
-  }, [selectedWalletRdns, wallets]);
+  }, [selectedWalletRdns, wallets]); // Check which event should trigger the update?
 
-  // Initialize ethers provider when wallet is selected
-  useEffect(() => {
-    if (selectedWalletRdns && wallets[selectedWalletRdns]) {
-      const provider = new ethers.BrowserProvider(
-        wallets[selectedWalletRdns].provider
-      );
-      setEthersProvider(provider);
-    } else {
-      setEthersProvider(null);
-    }
-  }, [selectedWalletRdns, wallets]);
-
-  // Get contract instance
-  const getContract = async (
-    contractAddress: string,
-    abi: any
-  ): Promise<Contract | null> => {
-    try {
-      if (!ethersProvider) {
-        throw new Error("No provider available");
-      }
-
-      const signer = await ethersProvider.getSigner();
-      return new ethers.Contract(contractAddress, abi, signer);
-    } catch (error: any) {
-      console.error("Failed to get contract:", error);
-      setError(`Failed to get contract: ${error?.message}`);
-      return null;
-    }
-  };
 
   useEffect(() => {
     const savedSelectedWalletRdns = localStorage.getItem("selectedWalletRdns");
@@ -178,7 +150,6 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
     errorMessage,
     ethersProvider,
     todoRepository,
-    getContract,
     connectWallet,
     disconnectWallet,
     clearError,
