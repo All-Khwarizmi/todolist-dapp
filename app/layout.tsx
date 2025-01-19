@@ -4,10 +4,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { QueryProvider } from "@/src/store/query-provider";
-import {
-  WalletProvider,
-  WalletProviderContext,
-} from "@/src/hooks/wallet/WalletProvider";
+import { WalletProvider } from "@/src/hooks/wallet/WalletProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -39,6 +37,7 @@ export default function RootLayout({
         >
           <QueryProvider>
             <WalletProvider>{children}</WalletProvider>
+            <Toaster position="top-right" richColors={true} />
           </QueryProvider>
         </ThemeProvider>
       </body>
