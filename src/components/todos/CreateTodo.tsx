@@ -1,13 +1,17 @@
 "use client";
+
 import { useCreateTodo } from "@/src/core/usecases/todos/create-todo";
 import { useGetTodoOwner } from "@/src/core/usecases/todos/get-owner";
-import { useGetTodos } from "@/src/core/usecases/todos/get-todos";
 import { useWalletProvider } from "@/src/hooks/wallet/use-wallet-context";
 import { useEffect, useMemo, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2 } from "lucide-react";
 
 function CreateTodo() {
   const [isOwner, setIsOwner] = useState(false);
-
   const ctx = useWalletProvider();
 
   const {
@@ -28,18 +32,13 @@ function CreateTodo() {
     mutate: createTodo,
     isPending,
     isError,
+    error,
   } = useCreateTodo({
     todoRepository: ctx?.todoRepository,
   });
 
   useEffect(() => {
     if (owner) {
-      console.log(
-        "owner",
-        owner.toUpperCase(),
-        connectedAccount?.toUpperCase(),
-        owner.toUpperCase() === connectedAccount?.toUpperCase()
-      );
       setIsOwner(owner.toUpperCase() === connectedAccount?.toUpperCase());
     }
   }, [owner, connectedAccount]);
@@ -48,38 +47,66 @@ function CreateTodo() {
     refetchOwner();
   }, [ctx?.chainId, ctx?.selectedAccount]);
 
-  if (ownerIsLoading) {
-    return <p>Loading...</p>;
-  }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (todoDefinition.trim()) {
+      createTodo(todoDefinition);
+      setTodoDefinition("");
+    }
+  };
 
   return (
-    <div>
-      {isOwner ? (
-        <div>
-          <h1 className="text-3xl font-bold">Create Todo</h1>
-          <input
-            type="text"
-            placeholder="Enter todo definition"
-            onChange={(e) => setTodoDefinition(e.target.value)}
-          />
-          <button
-            onClick={() => {
-              createTodo(todoDefinition);
-              // setTodoDefinition("");
-            }}
-          >
-            Create Todo
-          </button>
-        </div>
-      ) : (
-        <div>
-          <h1 className="text-3xl font-bold">Todo List Owner</h1>
-          {ownerIsLoading && <p>Loading...</p>}
-          {ownerError && <p>Error: {ownerError.message}</p>}
-          <p>{!isOwner && "Connect as the owner to create a todo"}</p>
-        </div>
-      )}
-    </div>
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>{isOwner ? "Create Todo" : "Todo List Owner"}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {ownerIsLoading ? (
+          <div className="flex items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </div>
+        ) : ownerError ? (
+          <Alert variant="destructive">
+            <AlertDescription>{ownerError.message}</AlertDescription>
+          </Alert>
+        ) : isOwner ? (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              type="text"
+              placeholder="Enter todo definition"
+              value={todoDefinition}
+              onChange={(e) => setTodoDefinition(e.target.value)}
+              disabled={isPending}
+            />
+            <Button
+              type="submit"
+              disabled={isPending || !todoDefinition.trim()}
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                "Create Todo"
+              )}
+            </Button>
+            {isError && (
+              <Alert variant="destructive">
+                <AlertDescription>
+                  {error?.message ||
+                    "An error occurred while creating the todo."}
+                </AlertDescription>
+              </Alert>
+            )}
+          </form>
+        ) : (
+          <p className="text-center text-muted-foreground">
+            Connect as the owner to create a todo
+          </p>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
