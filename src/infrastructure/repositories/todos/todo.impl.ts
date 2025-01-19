@@ -98,11 +98,53 @@ export class TodoRepositoryImpl implements TodoRepository {
       const tx = await contract.updateTodo(
         index,
         updatedTodo.status,
-        updatedTodo.definition,
-        {
-          value: ethers.parseEther("0.01"),
-        }
+        updatedTodo.definition
       );
+
+      await tx.wait();
+    } catch (error: any) {
+      // MetaMask user rejection
+      if (error.code === "ACTION_REJECTED") {
+        throw new UserRejectedError();
+      }
+
+      // Contract revert errors
+      if (error.code === "CALL_EXCEPTION") {
+        const message = error.reason || "Transaction reverted";
+        throw new ContractError(message);
+      }
+
+      // Gas estimation failures
+      if (error.code === "UNPREDICTABLE_GAS_LIMIT") {
+        throw new ContractError("Transaction would fail - check your inputs");
+      }
+
+      // Network issues
+      if (error.code === "NETWORK_ERROR") {
+        throw new Error("Network error - please check your connection");
+      }
+
+      // Custom contract errors (from require statements)
+      if (error.data) {
+        // Extract custom error data
+        const reason = error.data.message || error.message;
+        throw new ContractError(reason);
+      }
+
+      // Unknown errors
+      throw new Error("Transaction failed: " + error.message);
+    }
+  }
+
+  async deleteTodo(index: number) {
+    try {
+      const signer = await this._providerRepository.getSigner();
+      if (!signer) throw new Error("Failed to get signer");
+
+      const contract = await this._providerRepository.getTodoContract();
+      if (!contract) throw new Error("Failed to get contract");
+
+      const tx = await contract.deleteTodo(index);
 
       await tx.wait();
     } catch (error: any) {
