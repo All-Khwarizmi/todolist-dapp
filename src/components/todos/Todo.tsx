@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useUpdateTodo } from "@/src/core/usecases/todos/update-todo";
 import { useWalletProvider } from "@/src/hooks/wallet/use-wallet-context";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, Trash2 } from "lucide-react";
@@ -16,6 +15,13 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/src/store/query-keys";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface TodoProps {
   index: number;
@@ -40,15 +46,21 @@ export function Todo({ index, todo, refetchTodos }: TodoProps) {
     todoRepository: ctx?.todoRepository,
   });
 
-  const handleUpdate = () => {
-    if (editedDefinition === todo.definition && editedStatus === todo.status) {
+  const handleUpdate = (_todo?: Partial<Todo>) => {
+    if (
+      editedDefinition === todo.definition &&
+      editedStatus === todo.status &&
+      _todo === undefined
+    ) {
       setIsEditing(false);
       return;
     }
 
     const updatedTodo: Partial<Todo> = {
       ...todo,
+      ..._todo,
     };
+
     if (editedDefinition !== todo.definition) {
       updatedTodo.definition = editedDefinition;
     }
@@ -116,54 +128,109 @@ export function Todo({ index, todo, refetchTodos }: TodoProps) {
     });
   };
 
+  const parseStatus = (status: number): Status => {
+    switch (status) {
+      case 0:
+        return Status.TODO;
+      case 1:
+        return Status.DOING;
+      case 2:
+        return Status.DONE;
+      default:
+        return Status.TODO;
+    }
+  };
+
+  const fromStatusToString = (status: Status): string => {
+    switch (status) {
+      case Status.TODO:
+        return "0";
+      case Status.DOING:
+        return "1";
+      case Status.DONE:
+        return "2";
+      default:
+        return "0";
+    }
+  };
+
+  const handleStatusChange = (value: string) => {
+    console.log(value);
+    setEditedStatus(parseStatus(Number(value)));
+    handleUpdate({
+      status: parseStatus(Number(value)),
+    });
+  };
+
   return (
-    <div className="flex items-center space-x-2">
-      <Checkbox
-        checked={editedStatus === Status.UPDATED}
-        onCheckedChange={(checked) =>
-          setEditedStatus(checked ? Status.UPDATED : Status.CREATED)
-        }
-        disabled={isUpdating || isDeleting}
-      />
-      {isEditing ? (
-        <Input
-          value={editedDefinition}
-          onChange={(e) => setEditedDefinition(e.target.value)}
-          className="flex-grow"
+    <div className="flex flex-col gap-4 min-w-72 space-x-2">
+      <div className="flex  flex-col space-x-2">
+        {isEditing ? (
+          <Input
+            value={editedDefinition}
+            onChange={(e) => setEditedDefinition(e.target.value)}
+            className="flex-grow"
+            disabled={isUpdating || isDeleting}
+          />
+        ) : (
+          <span className="flex-grow">{todo.definition}</span>
+        )}
+        <span className="text-xs text-muted-foreground">
+          {todo.createdAt.toLocaleDateString()}
+        </span>
+      </div>
+      <div className="flex items-center space-x-2">
+        <Select
+          value={fromStatusToString(editedStatus)}
+          onValueChange={handleStatusChange}
           disabled={isUpdating || isDeleting}
-        />
-      ) : (
-        <span className="flex-grow">{todo.definition}</span>
-      )}
-      <span className="text-xs text-muted-foreground">
-        {todo.createdAt.toLocaleDateString()}
-      </span>
-      {isEditing ? (
+        >
+          <SelectTrigger className="w-[100px]">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={fromStatusToString(Status.TODO)}>
+              TODO
+            </SelectItem>
+            <SelectItem value={fromStatusToString(Status.DOING)}>
+              DOING
+            </SelectItem>
+            <SelectItem value={fromStatusToString(Status.DONE)}>
+              DONE
+            </SelectItem>
+          </SelectContent>
+        </Select>
+
+        {isEditing ? (
+          <Button
+            onClick={() => handleUpdate()}
+            disabled={isUpdating || isDeleting}
+            size="sm"
+          >
+            {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+          </Button>
+        ) : (
+          <Button
+            onClick={() => setIsEditing(true)}
+            size="sm"
+            variant="outline"
+          >
+            Edit
+          </Button>
+        )}
         <Button
-          onClick={handleUpdate}
+          onClick={handleDelete}
           disabled={isUpdating || isDeleting}
           size="sm"
+          variant="destructive"
         >
-          {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+          {isDeleting ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Trash2 className="h-4 w-4" />
+          )}
         </Button>
-      ) : (
-        <Button onClick={() => setIsEditing(true)} size="sm" variant="outline">
-          Edit
-        </Button>
-      )}
-      <Button
-        onClick={handleDelete}
-        disabled={isUpdating || isDeleting}
-        size="sm"
-        variant="destructive"
-      >
-        {isDeleting ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <Trash2 className="h-4 w-4" />
-        )}
-      </Button>
-      <button onClick={() => refetchTodos()}>Refetch</button>
+      </div>
     </div>
   );
 }

@@ -36,7 +36,7 @@ export default function Home() {
         </nav>
       </header>
       <main className="flex-grow container mx-auto px-4 py-8">
-        <div className="flex flex-col items-center space-y-8">
+        <div className="flex flex-col min-w-96 items-center space-y-8">
           {chainId !== null && chainId === "Sepolia" ? (
             <TodoList />
           ) : (

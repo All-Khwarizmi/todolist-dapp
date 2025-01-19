@@ -21,8 +21,8 @@ function TodoList() {
   });
 
   return (
-    <div className="flex flex-col items-center space-y-8">
-      <Card className="w-full max-w-md">
+    <div className="flex flex-col min-w-xl items-center space-y-8">
+      <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>Todo List</CardTitle>
         </CardHeader>
@@ -37,7 +37,7 @@ function TodoList() {
           {error && <p className="text-red-500">Error: {error.message}</p>}
           {todos && todos.length > 0 ? (
             <ScrollArea className="h-[300px] pr-4">
-              <ul className="space-y-2">
+              <ul className="space-y-4">
                 {todos.map((todo, index) => (
                   <li key={index}>
                     <Todo

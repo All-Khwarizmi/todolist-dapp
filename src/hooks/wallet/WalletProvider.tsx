@@ -33,6 +33,8 @@ interface WalletProviderContext {
   clearError: () => void;
 }
 
+const CONTRACT_ADDRESS = "0xC8b741ac7BA75e49aE2Bfd7E5e3446df45f4DA9B";
+
 export const WalletProviderContext =
   createContext<WalletProviderContext | null>(null);
 
@@ -69,7 +71,6 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
       provider
         .request({ method: "eth_chainId" })
         .then(async (chainId: unknown) => {
-          console.log("🚀 chainId", chainId);
           await handleChainChanged(chainId as string);
         })
         .catch(console.error);
@@ -103,7 +104,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
     const providerRepository = new ProviderRepositoryImpl({
       contractAbi: TODO_ABI,
-      contractAddress: "0xC8b741ac7BA75e49aE2Bfd7E5e3446df45f4DA9B",
+      contractAddress: CONTRACT_ADDRESS,
       eipProvider: wallet.provider,
     });
 

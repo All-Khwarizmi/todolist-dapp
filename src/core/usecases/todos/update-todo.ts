@@ -4,7 +4,6 @@ import { QUERY_KEYS } from "@/src/store/query-keys";
 import { toast } from "sonner";
 import { Todo } from "../../entities/todos/todo";
 
-// Define input type for the mutation
 type UpdateTodoInput = {
   index: number;
   updatedTodo: Partial<Todo>;
@@ -101,7 +100,6 @@ export function useUpdateTodo({
     },
 
     onSettled: async () => {
-      // After 2 seconds, refetch to ensure we're in sync with blockchain
       await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.TODOS.GET_TODOS],
       });

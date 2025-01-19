@@ -1,7 +1,7 @@
 export enum Status {
-  CREATED,
-  UPDATED,
-  DELETED,
+  TODO,
+  DOING,
+  DONE,
 }
 
 export interface Todo {
