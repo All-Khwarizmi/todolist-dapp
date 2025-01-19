@@ -23,4 +23,17 @@ export class TodoRepositoryImpl implements TodoRepository {
       return null;
     }
   }
+
+  async getOwner() {
+    try {
+      const contract = await this._providerRepository.getTodoContract();
+
+      const owner = await contract?.owner();
+
+      return owner;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
 }

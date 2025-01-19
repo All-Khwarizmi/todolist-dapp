@@ -4,5 +4,6 @@ export const QUERY_KEYS = {
   },
   TODOS: {
     GET_TODOS: "GET_TODOS",
+    GET_TODO_OWNER: "GET_TODO_OWNER",
   },
 };
