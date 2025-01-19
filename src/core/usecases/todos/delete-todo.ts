@@ -2,6 +2,7 @@ import { TodoRepository } from "../../repositories/todo.repository";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/src/contexts/query-keys";
 import { toast } from "sonner";
+import { ContractError, UserRejectedError } from "../../entities/todos/errors";
 
 class DeleteTodo {
   private _todoRepository: TodoRepository;

@@ -156,7 +156,6 @@ export function Todo({ index, todo }: TodoProps) {
   };
 
   const handleStatusChange = (value: string) => {
-    console.log(value);
     setEditedStatus(parseStatus(Number(value)));
     handleUpdate({
       status: parseStatus(Number(value)),
