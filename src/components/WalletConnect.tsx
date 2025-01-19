@@ -3,6 +3,14 @@
 import React, { useState } from "react";
 import { useWalletProvider } from "../hooks/wallet/use-wallet-context";
 import { formatAddress } from "../utils";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 function WalletConnect() {
   const [open, setOpen] = useState(false);
@@ -15,65 +23,59 @@ function WalletConnect() {
   return (
     <div>
       {ctx.errorMessage && (
-        <div onClick={ctx.clearError} className="text-red-500 text-sm">
-          {ctx.errorMessage}
-        </div>
+        <Alert variant="destructive" className="mb-2">
+          <AlertDescription>{ctx.errorMessage}</AlertDescription>
+        </Alert>
       )}
       {ctx.selectedAccount ? (
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg"
+        <Button
+          variant="outline"
           onClick={() => {
             window.confirm("Disconnect wallet") && ctx.disconnectWallet();
           }}
         >
-          {formatAddress(ctx.selectedAccount || "")}
-        </button>
+          {formatAddress(ctx.selectedAccount)}
+        </Button>
       ) : (
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => {
-            setOpen(!open);
-          }}
-        >
-          Connect Wallet
-          <div
-            className={`${
-              open ? "" : "hidden"
-            } absolute z-10 top-0 left-0 w-full h-full bg-black/50 backdrop-blur-sm`}
-          ></div>
-        </button>
+        <Button onClick={() => setOpen(true)}>Connect Wallet</Button>
       )}
-      {open && (
-        <div className="absolute z-10 top-0 inset-0 w-full h-full  backdrop-blur-sm">
-          <div className="flex flex-col gap-4 p-8 w-full max-w-lg">
-            {Object.keys(ctx.wallets).length > 0 ? (
-              <ul className="flex flex-col gap-4 size-8">
-                {Object.values(ctx.wallets).map(
-                  (provider: EIP6963ProviderDetail) => (
-                    <button
-                      key={provider.info.uuid}
-                      onClick={async () => {
-                        console.log(provider.info);
-                        await ctx.connectWallet(provider.info.rdns);
-                        setOpen(false);
-                      }}
-                    >
-                      <img
-                        width={50}
-                        src={provider.info.icon}
-                        alt={provider.info.name}
-                      />
-                      <div>{provider.info.name}</div>
-                    </button>
-                  )
-                )}
-              </ul>
-            ) : (
-              <div>there are no Announced Providers</div>
-            )}
-          </div>
-        </div>
-      )}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Connect Wallet</DialogTitle>
+          </DialogHeader>
+          {Object.keys(ctx.wallets).length > 0 ? (
+            <div className="grid grid-cols-2 gap-4">
+              {Object.values(ctx.wallets).map(
+                (provider: EIP6963ProviderDetail) => (
+                  <Button
+                    key={provider.info.uuid}
+                    variant="outline"
+                    className="flex flex-col items-center justify-center h-24"
+                    onClick={async () => {
+                      await ctx.connectWallet(provider.info.rdns);
+                      setOpen(false);
+                    }}
+                  >
+                    <img
+                      width={32}
+                      height={32}
+                      src={provider.info.icon || "/placeholder.svg"}
+                      alt={provider.info.name}
+                      className="mb-2"
+                    />
+                    <span className="text-sm">{provider.info.name}</span>
+                  </Button>
+                )
+              )}
+            </div>
+          ) : (
+            <p className="text-center text-muted-foreground">
+              No wallet providers available
+            </p>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
