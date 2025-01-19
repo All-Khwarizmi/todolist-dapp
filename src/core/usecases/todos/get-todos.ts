@@ -1,9 +1,7 @@
-import { inject } from "@/src/infrastructure/di/inject";
 import { TodoDto } from "../../entities/todo.dto";
 import { TodoRepository } from "../../repositories/todo.repository";
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/src/store/query-keys";
-const todoRepository = inject.todoRepository;
 
 class GetTodos {
   private _todoRepository: TodoRepository;
@@ -20,9 +18,17 @@ class GetTodos {
   }
 }
 
-const getTodos = new GetTodos(todoRepository).execute();
-
-export function useGetTodos() {
+export function useGetTodos({
+  todoRepository,
+}: {
+  todoRepository?: TodoRepository;
+}) {
+  let getTodos;
+  if (todoRepository) {
+    getTodos = new GetTodos(todoRepository).execute();
+  } else {
+    getTodos = null;
+  }
   return useQuery({
     queryKey: [QUERY_KEYS.TODOS.GET_TODOS],
     queryFn: () => getTodos,

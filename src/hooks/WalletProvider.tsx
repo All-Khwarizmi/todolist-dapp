@@ -1,10 +1,16 @@
+import { BrowserProvider, Contract, ethers } from "ethers";
 import {
   PropsWithChildren,
   createContext,
+  use,
   useCallback,
   useEffect,
   useState,
 } from "react";
+import { TodoRepository } from "../core/repositories/todo.repository";
+import { ProviderRepositoryImpl } from "../infrastructure/repositories/provider.impl";
+import { TODO_ABI } from "../core/entities/todo-abi";
+import { TodoRepositoryImpl } from "../infrastructure/repositories/todos/todo.impl";
 
 // Type alias for a record where the keys are wallet identifiers and the values are account
 // addresses or null.
@@ -16,9 +22,12 @@ interface WalletProviderContext {
   selectedWallet: EIP6963ProviderDetail | null; // The selected wallet.
   selectedAccount: string | null; // The selected account address.
   errorMessage: string | null; // An error message.
-  connectWallet: (walletUuid: string) => Promise<void>; // Function to connect wallets.
-  disconnectWallet: () => void; // Function to disconnect wallets.
+  ethersProvider: BrowserProvider | null;
+  todoRepository?: TodoRepository;
+  connectWallet: (walletUuid: string) => Promise<void>;
+  disconnectWallet: () => void;
   clearError: () => void;
+  getContract: (address: string, abi: any) => Promise<Contract | null>;
 }
 
 declare global {
@@ -41,10 +50,57 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
   );
   const [selectedAccountByWalletRdns, setSelectedAccountByWalletRdns] =
     useState<SelectedAccountByWallet>({});
+  const [todoRepository, setTodoRepository] = useState<TodoRepository>();
 
   const [errorMessage, setErrorMessage] = useState("");
   const clearError = () => setErrorMessage("");
   const setError = (error: string) => setErrorMessage(error);
+  const [ethersProvider, setEthersProvider] = useState<BrowserProvider | null>(
+    null
+  );
+  useEffect(() => {
+    if (!selectedWalletRdns) return;
+    const wallet = wallets[selectedWalletRdns];
+    const providerRepository = new ProviderRepositoryImpl({
+      contractAbi: TODO_ABI,
+      contractAddress: "0xC8b741ac7BA75e49aE2Bfd7E5e3446df45f4DA9B",
+      eipProvider: wallet.provider,
+    });
+    const todoRepository = new TodoRepositoryImpl(providerRepository);
+
+    setTodoRepository(todoRepository);
+  }, [selectedWalletRdns, wallets]);
+
+  // Initialize ethers provider when wallet is selected
+  useEffect(() => {
+    if (selectedWalletRdns && wallets[selectedWalletRdns]) {
+      const provider = new ethers.BrowserProvider(
+        wallets[selectedWalletRdns].provider
+      );
+      setEthersProvider(provider);
+    } else {
+      setEthersProvider(null);
+    }
+  }, [selectedWalletRdns, wallets]);
+
+  // Get contract instance
+  const getContract = async (
+    contractAddress: string,
+    abi: any
+  ): Promise<Contract | null> => {
+    try {
+      if (!ethersProvider) {
+        throw new Error("No provider available");
+      }
+
+      const signer = await ethersProvider.getSigner();
+      return new ethers.Contract(contractAddress, abi, signer);
+    } catch (error: any) {
+      console.error("Failed to get contract:", error);
+      setError(`Failed to get contract: ${error?.message}`);
+      return null;
+    }
+  };
 
   useEffect(() => {
     const savedSelectedWalletRdns = localStorage.getItem("selectedWalletRdns");
@@ -144,6 +200,9 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
         ? null
         : selectedAccountByWalletRdns[selectedWalletRdns],
     errorMessage,
+    ethersProvider,
+    todoRepository,
+    getContract,
     connectWallet,
     disconnectWallet,
     clearError,

@@ -1,27 +1,41 @@
-import { TODO_ABI } from "@/src/core/entities/todo-abi";
 import { ProviderRepository } from "@/src/core/repositories/provider.repository";
-import { ethers } from "ethers";
+import { ethers, InterfaceAbi, Eip1193Provider } from "ethers";
+// "0xC8b741ac7BA75e49aE2Bfd7E5e3446df45f4DA9B";
 
 export class ProviderRepositoryImpl implements ProviderRepository {
-  private readonly CONTRACT_ABI: typeof TODO_ABI = TODO_ABI;
-  private readonly CONTRACT_ADDRESS =
-    "0xC8b741ac7BA75e49aE2Bfd7E5e3446df45f4DA9B";
+  private readonly _contractAbi: InterfaceAbi | null;
+  private readonly _contractAddress: string | null;
   private contract?: ethers.Contract;
-  constructor() {
+  constructor({
+    contractAbi,
+    contractAddress,
+    eipProvider,
+  }: {
+    contractAbi: InterfaceAbi;
+    contractAddress: string;
+    eipProvider: Eip1193Provider;
+  }) {
     try {
-      const provider = this.getSigner();
+      this._contractAbi = contractAbi;
+      this._contractAddress = contractAddress;
+      const provider = this.getSigner(eipProvider);
+      if (!this._contractAddress || !this._contractAbi) return;
       this.contract = new ethers.Contract(
-        this.CONTRACT_ADDRESS,
-        this.getTodoAbi(),
+        this._contractAddress,
+        this._contractAbi,
         provider
       );
     } catch (error) {
+      this._contractAbi = null;
+      this._contractAddress = null;
+
+      console.error("Failed to initialize contract");
       console.error(error);
     }
   }
-  public getSigner() {
+  public getSigner(eip: Eip1193Provider) {
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const provider = new ethers.BrowserProvider(eip);
       return provider;
     } catch (error) {
       console.error(error);
@@ -29,23 +43,8 @@ export class ProviderRepositoryImpl implements ProviderRepository {
     }
   }
 
-  private getTodoAbi() {
-    return this.CONTRACT_ABI;
-  }
-
   public getTodoContract() {
     if (!this.contract) return null;
     return this.contract;
-  }
-
-  getUserBalance(accountAddress: string) {
-    try {
-      const signer = this.getSigner();
-
-      if (!signer) return null;
-      return signer.getBalance(accountAddress);
-    } catch (error) {
-      console.error(error);
-    }
   }
 }

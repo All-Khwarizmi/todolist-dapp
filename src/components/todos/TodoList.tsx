@@ -1,8 +1,16 @@
 "use client";
 import { useGetTodos } from "@/src/core/usecases/todos/get-todos";
+import { useWalletProvider } from "@/src/hooks/useWalletContext";
 
 function TodoList() {
-  const { data: todos, isLoading, error } = useGetTodos();
+  const ctx = useWalletProvider();
+  const {
+    data: todos,
+    isLoading,
+    error,
+  } = useGetTodos({
+    todoRepository: ctx?.todoRepository,
+  });
 
   return (
     <div>
