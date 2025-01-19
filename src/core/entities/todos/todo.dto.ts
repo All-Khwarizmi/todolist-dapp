@@ -18,13 +18,13 @@ export class TodoDto {
     const todoStatus = ethers.formatUnits(status, "wei");
     switch (Number(todoStatus)) {
       case 0:
-        return Status.CREATED;
+        return Status.TODO;
       case 1:
-        return Status.UPDATED;
+        return Status.DOING;
       case 2:
-        return Status.DELETED;
+        return Status.DONE;
       default:
-        return Status.CREATED;
+        return Status.TODO;
     }
   }
 

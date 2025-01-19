@@ -18,6 +18,7 @@ class GetTodos {
 
       const formattedTodos = todos?.map((todo) => TodoDto.toDomain(todo));
 
+      console.log({ formattedTodos, todos });
       return formattedTodos;
     } catch (error) {
       console.error(error);

@@ -1,3 +1,7 @@
+import {
+  ContractError,
+  UserRejectedError,
+} from "@/src/core/entities/todos/errors";
 import { Todo } from "@/src/core/entities/todos/todo";
 import { ProviderRepository } from "@/src/core/repositories/provider.repository";
 import { TodoRepository } from "@/src/core/repositories/todo.repository";

@@ -18,6 +18,7 @@ import { QUERY_KEYS } from "@/src/contexts/query-keys";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -162,6 +163,8 @@ export function Todo({ index, todo }: TodoProps) {
     });
   };
 
+  console.log({ editedStatus, todo });
+
   return (
     <div className="flex flex-col gap-4 min-w-72 space-x-2">
       <div className="flex  flex-col space-x-2">
@@ -181,23 +184,25 @@ export function Todo({ index, todo }: TodoProps) {
       </div>
       <div className="flex items-center space-x-2">
         <Select
-          value={fromStatusToString(editedStatus)}
           onValueChange={handleStatusChange}
           disabled={isUpdating || isDeleting}
+          value={fromStatusToString(editedStatus)}
         >
           <SelectTrigger className="w-[100px]">
-            <SelectValue placeholder="Status" />
+            <SelectValue placeholder="Status" className="text-sm" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={fromStatusToString(Status.TODO)}>
-              TODO
-            </SelectItem>
-            <SelectItem value={fromStatusToString(Status.DOING)}>
-              DOING
-            </SelectItem>
-            <SelectItem value={fromStatusToString(Status.DONE)}>
-              DONE
-            </SelectItem>
+            <SelectGroup>
+              <SelectItem value={fromStatusToString(Status.TODO)}>
+                TODO
+              </SelectItem>
+              <SelectItem value={fromStatusToString(Status.DOING)}>
+                DOING
+              </SelectItem>
+              <SelectItem value={fromStatusToString(Status.DONE)}>
+                DONE
+              </SelectItem>
+            </SelectGroup>
           </SelectContent>
         </Select>
 
