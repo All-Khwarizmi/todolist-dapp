@@ -84,6 +84,7 @@ pnpm test
 
 - `/src/core/README.md`: Core business logic
 - `/src/infrastructure/README.md`: Implementation details
+- `/src/contexts/README.md`: Global state management
 - `/app/README.md`: Next.js app structure
 
 ## 🔒 Security Considerations
