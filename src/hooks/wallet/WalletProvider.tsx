@@ -1,7 +1,6 @@
 import {
   PropsWithChildren,
   createContext,
-  use,
   useCallback,
   useEffect,
   useState,
@@ -71,7 +70,7 @@ export const WalletProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const providerRepository = new ProviderRepositoryImpl({
       contractAbi: TODO_ABI,
       contractAddress: CONTRACT_ADDRESS,
-      eipProvider: wallet.provider,
+      injectedProvider: wallet.provider,
     });
 
     const userRepository = new UserRepositoryImpl(providerRepository);
